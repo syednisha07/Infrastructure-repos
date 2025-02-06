@@ -1,0 +1,53 @@
+pipeline {
+    agent any
+    environment {
+        DOCKER_IMAGE = 'my-django-app'
+        REPO_URL = 'https://github.com/yourusername/your-repo.git'
+    }
+    stages {
+        stage('Clone') {
+            steps {
+                git branch: 'main', url: "${REPO_URL}"
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    docker.build(DOCKER_IMAGE)
+                }
+            }
+        }
+        stage('Test') {
+            steps {
+                script {
+                    docker.image(DOCKER_IMAGE).inside {
+                        sh 'python manage.py test'
+                    }
+                }
+            }
+        }
+        stage('Deploy to Staging') {
+            steps {
+                script {
+                    docker.image(DOCKER_IMAGE).run('-d -p 8000:8000')
+                }
+            }
+        }
+        stage('Integration Testing') {
+            steps {
+                script {
+                    // Add integration tests here
+                    sh './run_integration_tests.sh'
+                }
+            }
+        }
+        stage('Deploy to Production') {
+            steps {
+                script {
+                    // Add deployment steps to production
+                    sh './deploy_to_prod.sh'
+                }
+            }
+        }
+    }
+}
