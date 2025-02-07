@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         DOCKER_IMAGE = 'LMS-Docker'
-        REPO_URL = 'https://github.com/yourusername/your-repo.git'
+        REPO_URL = 'https://github.com/MH-Cognition/LMD-Backend-Deploy-Repo.git'
     }
     stages {
         stage('Clone') {
